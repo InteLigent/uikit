@@ -107,7 +107,7 @@
             if (active && active[0] != this.element[0]) {
         	active.trigger('uk.dropdown.hide', [active]);
                 active.removeClass("uk-open");
-                active.trigger('uk.dropdown.hide', [active]);
+                active.trigger('uk.dropdown.hiden', [active]);
             }
 
             if (hoverIdle) {
