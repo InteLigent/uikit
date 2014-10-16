@@ -124,6 +124,7 @@
 
         hide: function() {
             this.element.removeClass("uk-open");
+            this.trigger('uk.dropdown.hide', [this]);
             this.remainIdle = false;
 
             if (active && active[0] == this.element[0]) active = false;
