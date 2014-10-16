@@ -113,8 +113,9 @@
             }
 
             this.checkDimensions();
-            this.element.addClass("uk-open");
             this.trigger('uk.dropdown.show', [this]);
+            this.element.addClass("uk-open");
+            this.trigger('uk.dropdown.shown', [this]);
 
             UI.Utils.checkDisplay(this.dropdown);
             active = this.element;
@@ -123,8 +124,9 @@
         },
 
         hide: function() {
+    	    this.trigger('uk.dropdown.hide', [this]);
             this.element.removeClass("uk-open");
-            this.trigger('uk.dropdown.hide', [this]);
+            this.trigger('uk.dropdown.hiden', [this]);
             this.remainIdle = false;
 
             if (active && active[0] == this.element[0]) active = false;
