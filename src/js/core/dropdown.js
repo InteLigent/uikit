@@ -148,6 +148,10 @@
                         clearTimeout(hoverIdle);
                     }
 
+		    if ($this.remainIdle) {
+		        clearTimeout($this.remainIdle);
+		    }
+
                     var $target = $(e.target);
 
                     if (active && active[0] == $this.element[0] && ($target.is("a:not(.js-uk-prevent)") || $target.is(".uk-dropdown-close") || !$this.dropdown.find(e.target).length)) {
