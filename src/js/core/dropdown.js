@@ -105,7 +105,9 @@
             UI.$html.off("click.outer.dropdown");
 
             if (active && active[0] != this.element[0]) {
+        	active.trigger('uk.dropdown.hide', [active]);
                 active.removeClass("uk-open");
+                active.trigger('uk.dropdown.hide', [active]);
             }
 
             if (hoverIdle) {
