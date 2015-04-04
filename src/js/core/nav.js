@@ -1,4 +1,4 @@
-(function($, UI) {
+(function(UI) {
 
     "use strict";
 
@@ -10,23 +10,41 @@
             "multiple": false
         },
 
+        boot: function() {
+
+            // init code
+            UI.ready(function(context) {
+
+                UI.$("[data-uk-nav]", context).each(function() {
+                    var nav = UI.$(this);
+
+                    if (!nav.data("nav")) {
+                        var obj = UI.nav(nav, UI.Utils.options(nav.attr("data-uk-nav")));
+                    }
+                });
+            });
+        },
+
         init: function() {
 
             var $this = this;
 
-            this.on("click", this.options.toggle, function(e) {
+            this.on("click.uikit.nav", this.options.toggle, function(e) {
                 e.preventDefault();
-                var ele = $(this);
+                var ele = UI.$(this);
                 $this.open(ele.parent()[0] == $this.element[0] ? ele : ele.parent("li"));
             });
 
             this.find(this.options.lists).each(function() {
-                var $ele   = $(this),
+                var $ele   = UI.$(this),
                     parent = $ele.parent(),
                     active = parent.hasClass("uk-active");
 
                 $ele.wrap('<div style="overflow:hidden;height:0;position:relative;"></div>');
                 parent.data("list-container", $ele.parent());
+
+                // Init ARIA
+                parent.attr('aria-expanded', parent.hasClass("uk-open"));
 
                 if (active) $this.open(parent, true);
             });
@@ -35,14 +53,17 @@
 
         open: function(li, noanimation) {
 
-            var element = this.element, $li = $(li);
+            var $this = this, element = this.element, $li = UI.$(li);
 
             if (!this.options.multiple) {
 
                 element.children(".uk-open").not(li).each(function() {
-                    if ($(this).data("list-container")) {
-                        $(this).data("list-container").stop().animate({height: 0}, function() {
-                            $(this).parent().removeClass("uk-open");
+
+                    var ele = UI.$(this);
+
+                    if (ele.data("list-container")) {
+                        ele.data("list-container").stop().animate({height: 0}, function() {
+                            UI.$(this).parent().removeClass("uk-open");
                         });
                     }
                 });
@@ -50,12 +71,19 @@
 
             $li.toggleClass("uk-open");
 
+            // Update ARIA
+            $li.attr('aria-expanded', $li.hasClass("uk-open"));
+
             if ($li.data("list-container")) {
+
                 if (noanimation) {
                     $li.data('list-container').stop().height($li.hasClass("uk-open") ? "auto" : 0);
+                    this.trigger("display.uk.check");
                 } else {
                     $li.data('list-container').stop().animate({
                         height: ($li.hasClass("uk-open") ? getHeight($li.data('list-container').find('ul:first')) : 0)
+                    }, function() {
+                        $this.trigger("display.uk.check");
                     });
                 }
             }
@@ -66,7 +94,7 @@
     // helper
 
     function getHeight(ele) {
-        var $ele = $(ele), height = "auto";
+        var $ele = UI.$(ele), height = "auto";
 
         if ($ele.is(":visible")) {
             height = $ele.outerHeight();
@@ -85,16 +113,4 @@
         return height;
     }
 
-    // init code
-    UI.ready(function(context) {
-
-        $("[data-uk-nav]", context).each(function() {
-            var nav = $(this);
-
-            if (!nav.data("nav")) {
-                var obj = UI.nav(nav, UI.Utils.options(nav.attr("data-uk-nav")));
-            }
-        });
-    });
-
-})(jQuery, jQuery.UIkit);
+})(UIkit);

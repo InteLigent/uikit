@@ -4,9 +4,11 @@ UIkit is a lightweight and modular front-end framework for developing fast and p
 
 * [Homepage](http://getuikit.com) - Learn more about UIkit
 * [@getuikit](https://twitter.com/getuikit) - Get the latest buzz on Twitter
-* [Google+](https://plus.google.com/communities/114238665434626719878) - Share news and latest work
-* [Issues](http://github.com/uikit/uikit/issues) - Report bugs
-* [Developer Chat](https://www.hipchat.com/gaWuqCDrW) - Every work day between 8:00 and 18:00 UTC
+* [Google+ Community](https://plus.google.com/communities/114238665434626719878) - Share news and latest work
+
+Join our developer chat. We are online every work day between 8:00 and 18:00 UTC
+
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/uikit/uikit)
 
 ## Getting started
 
@@ -49,10 +51,19 @@ The built version of UIkit will be put in the `/dist` subdirectory. Pass a theme
 ### Browsersync
 
 ```
-gulp watch [-t themename]
+gulp watch
 ```
 
-After running `gulp watch` a new browser instance will open, pointing to the uikit folder - `http://localhost:3000/`. The browser window will reload anytime you modify a source file. To speed up the build and reload process you can pass a theme name parameter to only watch the specified theme.
+After running `gulp watch` a new browser instance will open, pointing to the uikit folder - `http://localhost:3000/`. The browser window will reload anytime you modify a source file.
+
+### Custom prefix
+
+Run gulp with your own prefix parameter ```-p``` to have all classes and JavaScript files custom prefixed.
+
+```
+gulp -p myprefix
+```
+
 
 ## Contributing
 
@@ -64,14 +75,12 @@ Each time you want to work on a fix or a new feature, create a new branch based 
 
 UIkit is maintained by using the [Semantic Versioning Specification (SemVer)](http://semver.org).
 
-## Credits
+## Browser Support
 
-We built UIkit using popular open source projects.
+![Chrome](https://raw.github.com/alrra/browser-logos/master/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/firefox/firefox_48x48.png) | ![IE](https://raw.github.com/alrra/browser-logos/master/internet-explorer/internet-explorer_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/opera/opera_48x48.png)
+--- | --- | --- | --- | --- |
+Latest ✔ | Latest ✔ | 9+ ✔ | 7.1+ ✔ | Latest ✔ |
 
-* jQuery ([MIT License](http://opensource.org/licenses/MIT))
-* normalize.css ([MIT License](http://opensource.org/licenses/MIT))
-* FontAwesome ([CC BY 3.0 License](http://creativecommons.org/licenses/by/3.0/))
+## Copyright and License
 
-## Copyright and license
-
-Copyright 2014 [YOOtheme](http://www.yootheme.com) GmbH under the [MIT license](LICENSE.md).
+Copyright [YOOtheme](http://www.yootheme.com) GmbH under the [MIT license](LICENSE.md).

@@ -2,17 +2,17 @@
 
     var component;
 
-    if (jQuery && jQuery.UIkit) {
-        component = addon(jQuery, jQuery.UIkit);
+    if (window.UIkit) {
+        component = addon(UIkit);
     }
 
     if (typeof define == "function" && define.amd) {
         define("uikit-search", ["uikit"], function(){
-            return component || addon(jQuery, jQuery.UIkit);
+            return component || addon(UIkit);
         });
     }
 
-})(function($, UI){
+})(function(UI){
 
     "use strict";
 
@@ -51,6 +51,23 @@
             delay  : 0
         },
 
+        boot: function() {
+
+            // init code
+            UI.$html.on("focus.timepicker.uikit", "[data-uk-timepicker]", function(e) {
+
+                var ele = UI.$(this);
+
+                if (!ele.data("timepicker")) {
+                    var obj = UI.timepicker(ele, UI.Utils.options(ele.attr("data-uk-timepicker")));
+
+                    setTimeout(function(){
+                        obj.autocomplete.input.focus();
+                    }, 40);
+                }
+            });
+        },
+
         init: function() {
 
             var $this  = this;
@@ -67,7 +84,7 @@
             this.autocomplete = UI.autocomplete(this.element.parent(), this.options);
             this.autocomplete.dropdown.addClass('uk-dropdown-small uk-dropdown-scrollable');
 
-            this.autocomplete.on('uk.autocomplete.show', function() {
+            this.autocomplete.on('show.uk.autocomplete', function() {
 
                 var selected = $this.autocomplete.dropdown.find('[data-value="'+$this.autocomplete.input.val()+'"]');
 
@@ -148,16 +165,4 @@
         }
     });
 
-    // init code
-    UI.$html.on("focus.timepicker.uikit", "[data-uk-timepicker]", function(e) {
-        var ele = $(this);
-
-        if (!ele.data("timepicker")) {
-            var obj = UI.timepicker(ele, UI.Utils.options(ele.attr("data-uk-timepicker")));
-
-            setTimeout(function(){
-                obj.autocomplete.input.focus();
-            }, 20);
-        }
-    });
 });

@@ -1,4 +1,4 @@
-(function($, UI) {
+(function(UI) {
 
     "use strict";
 
@@ -16,38 +16,66 @@
 
         remainIdle: false,
 
+        boot: function() {
+
+            var triggerevent = UI.support.touch ? "click" : "mouseenter";
+
+            // init code
+            UI.$html.on(triggerevent+".dropdown.uikit", "[data-uk-dropdown]", function(e) {
+
+                var ele = UI.$(this);
+
+                if (!ele.data("dropdown")) {
+
+                    var dropdown = UI.dropdown(ele, UI.Utils.options(ele.attr("data-uk-dropdown")));
+
+                    if (triggerevent=="click" || (triggerevent=="mouseenter" && dropdown.options.mode=="hover")) {
+                        dropdown.element.trigger(triggerevent);
+                    }
+
+                    if(dropdown.element.find('.uk-dropdown').length) {
+                        e.preventDefault();
+                    }
+                }
+            });
+        },
+
         init: function() {
 
             var $this = this;
 
-            this.dropdown = this.find(".uk-dropdown");
+            this.dropdown  = this.find('.uk-dropdown');
 
-            this.centered  = this.dropdown.hasClass("uk-dropdown-center");
-            this.justified = this.options.justify ? $(this.options.justify) : false;
+            this.centered  = this.dropdown.hasClass('uk-dropdown-center');
+            this.justified = this.options.justify ? UI.$(this.options.justify) : false;
 
-            this.boundary  = $(this.options.boundary);
+            this.boundary  = UI.$(this.options.boundary);
             this.flipped   = this.dropdown.hasClass('uk-dropdown-flip');
 
             if (!this.boundary.length) {
                 this.boundary = UI.$win;
             }
 
+            // Init ARIA
+            this.element.attr('aria-haspopup', 'true');
+            this.element.attr('aria-expanded', this.element.hasClass("uk-open"));
+
             if (this.options.mode == "click" || UI.support.touch) {
 
-                this.on("click", function(e) {
+                this.on("click.uikit.dropdown", function(e) {
 
-                    var $target = $(e.target);
+                    var $target = UI.$(e.target);
 
                     if (!$target.parents(".uk-dropdown").length) {
 
-                        if ($target.is("a[href='#']") || $target.parent().is("a[href='#']")){
+                        if ($target.is("a[href='#']") || $target.parent().is("a[href='#']") || ($this.dropdown.length && !$this.dropdown.is(":visible")) ){
                             e.preventDefault();
                         }
 
                         $target.blur();
                     }
 
-                    if (!$this.element.hasClass("uk-open")) {
+                    if (!$this.element.hasClass('uk-open')) {
 
                         $this.show();
 
@@ -85,7 +113,7 @@
 
                 }).on("click", function(e){
 
-                    var $target = $(e.target);
+                    var $target = UI.$(e.target);
 
                     if ($this.remainIdle) {
                         clearTimeout($this.remainIdle);
@@ -105,9 +133,10 @@
             UI.$html.off("click.outer.dropdown");
 
             if (active && active[0] != this.element[0]) {
-        	active.trigger('uk.dropdown.hide', [active]);
-                active.removeClass("uk-open");
-                active.trigger('uk.dropdown.hiden', [active]);
+                active.removeClass('uk-open');
+
+                // Update ARIA
+                active.attr('aria-expanded', 'false');
             }
 
             if (hoverIdle) {
@@ -115,21 +144,25 @@
             }
 
             this.checkDimensions();
-            this.trigger('uk.dropdown.show', [this]);
-            this.element.addClass("uk-open");
-            this.trigger('uk.dropdown.shown', [this]);
+            this.element.addClass('uk-open');
 
-            UI.Utils.checkDisplay(this.dropdown);
+            // Update ARIA
+            this.element.attr('aria-expanded', 'true');
+
+            this.trigger('show.uk.dropdown', [this]);
+
+            UI.Utils.checkDisplay(this.dropdown, true);
             active = this.element;
 
             this.registerOuterClick();
         },
 
         hide: function() {
-    	    this.trigger('uk.dropdown.hide', [this]);
-            this.element.removeClass("uk-open");
-            this.trigger('uk.dropdown.hiden', [this]);
+            this.element.removeClass('uk-open');
             this.remainIdle = false;
+
+            // Update ARIA
+            this.element.attr('aria-expanded', 'false');
 
             if (active && active[0] == this.element[0]) active = false;
         },
@@ -148,11 +181,7 @@
                         clearTimeout(hoverIdle);
                     }
 
-		    if ($this.remainIdle) {
-		        clearTimeout($this.remainIdle);
-		    }
-
-                    var $target = $(e.target);
+                    var $target = UI.$(e.target);
 
                     if (active && active[0] == $this.element[0] && ($target.is("a:not(.js-uk-prevent)") || $target.is(".uk-dropdown-close") || !$this.dropdown.find(e.target).length)) {
                         $this.hide();
@@ -171,7 +200,7 @@
             }
 
             var $this     = this,
-                dropdown  = this.dropdown.css("margin-" + $.UIkit.langdirection, ""),
+                dropdown  = this.dropdown.css("margin-" + UI.langdirection, ""),
                 offset    = dropdown.show().offset(),
                 width     = dropdown.outerWidth(),
                 boundarywidth  = this.boundary.width(),
@@ -179,12 +208,12 @@
 
             // centered dropdown
             if (this.centered) {
-                dropdown.css("margin-" + $.UIkit.langdirection, (parseFloat(width) / 2 - dropdown.parent().width() / 2) * -1);
+                dropdown.css("margin-" + UI.langdirection, (parseFloat(width) / 2 - dropdown.parent().width() / 2) * -1);
                 offset = dropdown.offset();
 
                 // reset dropdown
                 if ((width + offset.left) > boundarywidth || offset.left < 0) {
-                    dropdown.css("margin-" + $.UIkit.langdirection, "");
+                    dropdown.css("margin-" + UI.langdirection, "");
                     offset = dropdown.offset();
                 }
             }
@@ -196,7 +225,7 @@
 
                 dropdown.css("min-width", jwidth);
 
-                if ($.UIkit.langdirection == 'right') {
+                if (UI.langdirection == 'right') {
 
                     var right1   = boundarywidth - (this.justified.offset().left + jwidth),
                         right2   = boundarywidth - (dropdown.offset().left + dropdown.outerWidth());
@@ -212,7 +241,7 @@
             }
 
             if ((width + (offset.left-boundaryoffset)) > boundarywidth) {
-                dropdown.addClass("uk-dropdown-flip");
+                dropdown.addClass('uk-dropdown-flip');
                 offset = dropdown.offset();
             }
 
@@ -220,23 +249,23 @@
 
                 dropdown.addClass("uk-dropdown-stack");
 
-                if (dropdown.hasClass("uk-dropdown-flip")) {
+                if (dropdown.hasClass('uk-dropdown-flip')) {
 
                     if (!this.flipped) {
-                        dropdown.removeClass("uk-dropdown-flip");
+                        dropdown.removeClass('uk-dropdown-flip');
                         offset = dropdown.offset();
-                        dropdown.addClass("uk-dropdown-flip");
+                        dropdown.addClass('uk-dropdown-flip');
                     }
 
                     setTimeout(function(){
 
                         if ((dropdown.offset().left-boundaryoffset) < 0 || !$this.flipped && (dropdown.outerWidth() + (offset.left-boundaryoffset)) < boundarywidth) {
-                            dropdown.removeClass("uk-dropdown-flip");
+                            dropdown.removeClass('uk-dropdown-flip');
                         }
                     }, 0);
                 }
 
-                this.trigger('uk.dropdown.stack', [this]);
+                this.trigger('stack.uk.dropdown', [this]);
             }
 
             dropdown.css("display", "");
@@ -244,25 +273,4 @@
 
     });
 
-    var triggerevent = UI.support.touch ? "click" : "mouseenter";
-
-    // init code
-    UI.$html.on(triggerevent+".dropdown.uikit", "[data-uk-dropdown]", function(e) {
-
-        var ele = $(this);
-
-        if (!ele.data("dropdown")) {
-
-            var dropdown = UI.dropdown(ele, UI.Utils.options(ele.data("uk-dropdown")));
-
-            if (triggerevent=="click" || (triggerevent=="mouseenter" && dropdown.options.mode=="hover")) {
-                dropdown.element.trigger(triggerevent);
-            }
-
-            if(dropdown.element.find('.uk-dropdown').length) {
-                e.preventDefault();
-            }
-        }
-    });
-
-})(jQuery, jQuery.UIkit);
+})(UIkit);
